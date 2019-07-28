@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">    
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<!-- <link rel="stylesheet" href="style.css"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" src="brands.css">
+<script src="iro.min.js"></script>
+<script src="fabric.min.js"></script>
+<script src="FileSaver.min.js"></script>
+<script src="canvas-toBlob.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<style>
+button.btn-primary{
+margin-bottom:10px;
+}
+
+ul{
+margin: 10px;
+}
+
+#dropdownMenuButton{
+margin-bottom:10px;
+
+}
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */ 
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #4CAF50; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+#content {
+	width: 1500px;
+	height: 650px;
+	background-color: LightGray;
+	
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+}
+
+.tooltip{
+    border: none;
+    width: 32px;
+    height: 32px;
+    background-color: #eee;
+    transition: all ease-in-out 0.2s;
+    cursor: pointer;
+  }
+  .tooltip:hover{
+    border: 1px solid #888;
+    background-color: #ddd;
+  }
+
+</style>
+<script>
+	
+
+	document.onkeyup = function(e) {
+	if (e.keyCode == 46) {
+	canvas.remove(canvas.getActiveObject())
+	}
+	}
+
+var colorPicker = new iro.ColorPicker("#color-picker-container", {
+  // Set the size of the color picker
+  width: 180,
+  
+  // Set the initial color to pure red
+  color: "#f00"
+});
+
+  var colour;
+function onColorChange(color, changes) {
+  // print the color's new hex value to the developer console
+  colour = color.hexString;
+  document.getElementById("values").innerHTML = colour;
+  if(isDrawingEnabled){
+  canvas.freeDrawingBrush.color = colour;
+  }
+  <!-- else if(textEnabled){ -->
+	<!-- canvas.getActiveObject().set({fill: 'colour}); -->
+  <!-- } -->
+}
+
+colorPicker.on('color:change', onColorChange);
+
+
+</script>
+</head>
+<body>
+
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-left" style="display:none" id="leftMenu">
+  <button onclick="closeLeftMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
+           <ul class="list-unstyled components">
+                <li>
+				<h2>Edit</h2>
+				</li>
+							                    <button type="button" class="btn btn-primary"onclick = "Paste()">
+                        <i class="fas fa-paste"></i>
+                        <span>paste</span>
+                    </button>
+								                    <button type="button"  class="btn btn-primary"onclick = "Copy()">
+                        <i class="fas fa-copy"></i>
+                        <span>copy</span>
+                    </button>
+											                    <button type="button" class="btn btn-primary" onclick= "Undo()">
+                        <i class="fas fa-undo"></i>
+                        <span>undo</span>
+                    </button>
+								                    <button type="button"  class="btn btn-primary">
+                        <i class="fas fa-redo"></i>
+                        <span>redo</span>
+                    </button>
+				<hr>
+				                <li>
+                    <h2>Functions</h2>
+                </li>
+                                    </button>
+								                    <button type="button"  class="btn btn-primary">
+                        <i class="fas fa-expand"></i>
+                        <span>Select</span>
+                    </button>
+					                    </button>
+
+					                    </button>
+								                    <button type="button"  class="btn btn-primary addMore" onclick = "Draw()">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span>Draw</span>
+                    </button>
+					                    </button>
+								                    <button type="button"  class="btn btn-primary" onclick = "Text()">
+                        <i class="fas fa-paragraph"></i>
+                        <span>Text edit</span>
+                    </button>
+					                    </button>
+								                    <button type="button"  class="btn btn-primary" onclick = "Fill()">
+                        <i class="fas fa-fill-drip"></i>
+                        <span>Paint bucket</span>
+                    </button>
+					                  
+								                    <button type="button"  class="btn btn-primary">
+                        <i class="fas fa-crop"></i>
+                        <span>Crop</span>
+                    </button>
+					                    </button>
+								                    <button type="button"  class="btn btn-primary" onclick = "Erase()">
+                        <i class="fas fa-align-left"></i>
+                        <span>Eraser</span>
+                    </button>
+
+				<hr>
+				
+                <li>
+                    <h3>Pixel Manipulation</h3>
+                </li>
+				<div class="slidecontainer">
+  R<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
+				<div class="slidecontainer">
+  G<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>				
+						<div class="slidecontainer">
+  B<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
+						<div class="slidecontainer">
+ Contrast<input id="contrast" class="slider" type="range" min="0" step = "0.01" max="1" value="0" >
+</div>
+						<div class="slidecontainer">
+  Brightness<input id="brightness" class="slider" type="range" min="-1" max="1" value="0" step = "0.01" >
+</div>
+						<div class="slidecontainer">
+  Blur<input id="blur" class="slider" type="range" min="0" max="0.5" value="0" step = "0.01" >
+</div>		
+				
+				<hr>
+
+								                    <button type="button" id = "export" class="btn btn-primary" onclick = "Export()" >
+                        <i class="fas fa-align-left"></i>
+                        <span>export</span>
+                    </button>
+                    
+					
+					<label class="btn btn-primary btn-file">
+    Import <input type="file" id = "file" style="display: none;">
+</label>
+<!------------------->
+<hr>
+<h2>Social </h2>
+					                    </button>
+								                    <button type="button"  class="btn btn-primary addMore" >
+                        <i class="fab fa-facebook-f"></i>
+                        <span>Facebook</span>
+                    </button>
+					                    
+								                    <button type="button"  class="btn btn-primary" >
+                        <i class="fas fa-paragraph"></i>
+                        <span>Instagram</span>
+                    </button>
+					                    </button>
+
+
+
+            
+				
+				</ul>
+</div>
+
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-right" style="display:none;right:0;" id="rightMenu">
+  <button onclick="closeRightMenu()" class="w3-bar-item w3-button w3-large">Close &times;</button>
+	<ul class="list-unstyled components">
+	<li><h2>Layer</h2></li>
+	<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Layers
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Layer 0</a>
+
+
+  </div>
+</div>
+	<hr>
+	<li><h2>Pen/Eraser Width</h2></li>
+							<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="penWidth">
+</div>	
+<p>Width: <span id="demo"></span></p>
+	<hr>
+	<li><h2>Font</h2></li>
+	<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Fonts
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Arial</a>
+    <a class="dropdown-item" href="#">Comic Sans</a>
+
+  </div>
+</div>
+	<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="fontSize">
+</div>	
+	<hr>
+	<li><h2>Colours</h2></li>
+	<div id="color-picker-container"></div>
+	<div id="values"></div>
+	<hr>
+	
+	<li><h2>Filters</h2></li>
+	<hr>
+						                    </button>
+								                    <button type="button"  id = "grayscale" class="btn btn-primary" >
+                        <i class="fas fa-fill-drip"></i>
+                        <span>GreyScale</span>
+                    </button>
+											                    </button>
+								                    <button type="button" id="sepia"  class="btn btn-primary" >
+                        <i class="fas fa-fill-drip"></i>
+                        <span>Sepia</span>
+                    </button>
+											                    </button>
+								                    <button type="button" id = "vintage"  class="btn btn-primary" >
+                        <i class="fas fa-fill-drip"></i>
+                        <span>Vintage</span>
+                    </button>
+																                    </button>
+								                    <button type="button" id = "polaroid"  class="btn btn-primary" >
+                        <i class="fas fa-fill-drip"></i>
+                        <span>Polaroid</span>
+                    </button>
+	</ul>
+</div>
+
+<div class="w3-teal">
+  <button class="w3-button w3-teal w3-xlarge w3-left" onclick="openLeftMenu()">&#9776;</button>
+  <button class="w3-button w3-teal w3-xlarge w3-right" onclick="openRightMenu()">&#9776;</button>
+  <div class="w3-container">
+    <h1>Image Editor</h1>
+  </div>
+</div>
+
+<div class="w3-container" id = "content">
+<canvas id = "c" width = "1500" height = "700"></canvas>
+  
+  
+</div>
+     
+<script>
+function openLeftMenu() {
+  document.getElementById("leftMenu").style.display = "block";
+}
+
+function closeLeftMenu() {
+  document.getElementById("leftMenu").style.display = "none";
+}
+
+function openRightMenu() {
+  document.getElementById("rightMenu").style.display = "block";
+}
+
+function closeRightMenu() {
+  document.getElementById("rightMenu").style.display = "none";
+}
+
+		   var $ = function(id){return document.getElementById(id)};
+		   
+  function applyFilter(index, filter) {
+    var obj = canvas.getActiveObject();
+    obj.filters[index] = filter;
+    <!-- var timeStart = +new Date(); -->
+    obj.applyFilters();
+    <!-- var timeEnd = +new Date(); -->
+    <!-- var dimString = canvas.getActiveObject().width + ' x ' + -->
+      <!-- canvas.getActiveObject().height; -->
+    <!-- $('bench').innerHTML = dimString + 'px ' + -->
+      <!-- parseFloat(timeEnd-timeStart) + 'ms'; -->
+    canvas.renderAll();
+  }		   
+    function getFilter(index) {
+    var obj = canvas.getActiveObject();
+    return obj.filters[index];
+  }		   
+		   
+		     var canvas = this.__canvas = new fabric.Canvas('c'),
+      f = fabric.Image.filters;
+
+		   canvas.enableGLFiltering = false;
+var rect = new fabric.Rect({left:100, top: 150, fill: 'red', width:200, height:200});
+	
+document.getElementById('file').addEventListener("change", function (e) {
+  var file = e.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function (f) {
+    var data = f.target.result;                    
+    fabric.Image.fromURL(data, function (img) {
+      var oImg = img.set({left: 0, top: 0, angle: 0,width:img.width, height:img.height}).scale(0.9);
+      canvas.add(oImg).renderAll();
+      var a = canvas.setActiveObject(oImg);
+      var dataURL = canvas.toDataURL({format: 'png', quality: 0.8});
+    }, {
+  crossOrigin: 'anonymous'
+});
+  };
+  reader.readAsDataURL(file);
+});
+
+ canvas.on({
+    'object:selected': function() {
+      fabric.util.toArray(document.getElementsByTagName('input'))
+                          .forEach(function(el){ el.disabled = false; })
+
+      var filters = ['grayscale', 'invert', 'remove-color', 'sepia', 'brownie',
+                      'brightness', 'contrast', 'saturation', 'noise', 'vintage',
+                      'pixelate', 'blur', 'sharpen', 'emboss', 'technicolor',
+                      'polaroid', 'blend-color', 'gamma', 'kodachrome',
+                      'blackwhite', 'blend-image', 'hue', 'resize'];
+
+      for (var i = 0; i < filters.length; i++) {
+        $(filters[i]) && (
+        $(filters[i]).checked = !!canvas.getActiveObject().filters[i]);
+      }
+    }
+	<!-- , -->
+    <!-- 'selection:cleared': function() { -->
+      <!-- fabric.util.toArray(document.getElementsByTagName('input')) -->
+                          <!-- .forEach(function(el){ el.disabled = true; }) -->
+    <!-- } -->
+  });
+  
+      $('sepia').onclick = function() {
+    applyFilter(3,  new f.Sepia());
+  };
+   $('vintage').onclick = function() {
+    applyFilter(9,  new f.Vintage());
+  };
+  
+    $('grayscale').onclick = function() {
+    applyFilter(0,  new f.Grayscale());
+  };
+  
+    $('polaroid').onclick = function() {
+    applyFilter(15,  new f.Polaroid());
+  };
+  
+  
+  
+document.getElementById("contrast").oninput = function() {
+  applyFilter(6, new f.Contrast({
+    contrast: document.getElementById("contrast").value
+  }));
+};
+document.getElementById("blur").oninput = function() {
+  applyFilter(11, new f.Blur({
+    blur: document.getElementById("blur").value
+  }));
+};
+document.getElementById("brightness").oninput = function() {
+  applyFilter(5, new fabric.Image.filters.Brightness({
+      brightness: document.getElementById("brightness").value
+    }));
+};
+
+function Copy() {
+	// clone what are you copying since you
+	// may want copy and paste on different moment.
+	// and you do not want the changes happened
+	// later to reflect on the copy.
+	canvas.getActiveObject().clone(function(cloned) {
+		_clipboard = cloned;
+	});
+}
+
+
+
+
+function Paste() {
+	// clone again, so you can do multiple copies.
+	_clipboard.clone(function(clonedObj) {
+		canvas.discardActiveObject();
+		clonedObj.set({
+			left: clonedObj.left + 10,
+			top: clonedObj.top + 10,
+			evented: true,
+		});
+		if (clonedObj.type === 'activeSelection') {
+			// active selection needs a reference to the canvas.
+			clonedObj.canvas = canvas;
+			clonedObj.forEachObject(function(obj) {
+				canvas.add(obj);
+			});
+			// this should solve the unselectability
+			clonedObj.setCoords();
+		} else {
+			canvas.add(clonedObj);
+		}
+		_clipboard.top += 10;
+		_clipboard.left += 10;
+		canvas.setActiveObject(clonedObj);
+		canvas.requestRenderAll();
+	});
+}
+var slider = document.getElementById("penWidth");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+
+}
+
+
+
+var isDrawingEnabled = false;
+var drawingLineWidth = $('slider');
+function Draw(){
+	if(isDrawingEnabled){
+		isDrawingEnabled = false;
+		canvas.isDrawingMode = 0;
+	}else{
+		isDrawingEnabled = true;
+		canvas.isDrawingMode = 1;
+	}
+
+	
+}
+
+
+slider.onchange = function() {
+    canvas.freeDrawingBrush.width = slider.value;
+    
+  };
+
+
+ function Text(){
+var text = new fabric.Textbox("Text Here");
+text.set('fill', colour);
+canvas.add(text);
+canvas.setActiveObject(text);
+text.selectAll();
+text.enterEditing();
+text.hiddenTextarea.focus();
+}
+
+var fsize = document.getElementById("fontSize");
+fsize.onchange = function() {
+        canvas.getActiveObject().set("fontSize", document.getElementById("fontSize").value);
+    canvas.renderAll();
+    
+  };
+ 
+ 
+	var f = fabric.Image.filters;
+      var filters = ['grayscale', 'invert', 'remove-color', 'sepia', 'brownie',
+                      'brightness', 'contrast', 'saturation', 'noise', 'vintage',
+                      'pixelate', 'blur', 'sharpen', 'emboss', 'technicolor',
+                      'polaroid', 'blend-color', 'gamma', 'kodachrome',
+                      'blackwhite', 'blend-image', 'hue', 'resize'];
+ 
+
+
+
+
+
+
+function Export(){
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL();
+            link.download = "image.png";
+            link.click();
+}
+
+    var fontControl = $('#dropdownMenuButton');
+    $(document.body).on('change', '#font-control', function () {
+        text.fontFamily = fontControl.val();
+        canvas.renderAll();
+    });
+
+var isEraserEnabled = false;	
+function Erase(){
+	if(!isEraserEnabled){
+		isEraserEnabled = true;
+		canvas.isDrawingMode = 1;
+		canvas.freeDrawingBrush.color = 'LightGray';
+	}else{
+	isEraserEnabled = false;
+	canvas.isDrawingMode = 0;
+	}
+	
+}
+
+</script>
+
+   <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+	    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+        integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+        crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+        integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+        crossorigin="anonymous"></script>
+	<script src = "jquery.eraser.js"></script>	
+</body>
+</html>
