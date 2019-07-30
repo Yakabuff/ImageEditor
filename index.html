@@ -190,7 +190,7 @@ colorPicker.on('color:change', onColorChange);
                         <span>Paint bucket</span>
                     </button>
 					                  
-								                    <button type="button"  class="btn btn-primary">
+								                    <button type="button"  class="btn btn-primary" onclick = "Crop()">
                         <i class="fas fa-crop"></i>
                         <span>Crop</span>
                     </button>
@@ -373,11 +373,13 @@ function closeRightMenu() {
     return obj.filters[index];
   }		   
 		   
-		     var canvas = this.__canvas = new fabric.Canvas('c'),
+		     var canvas = this.__canvas = new fabric.Canvas('c', {
+  preserveObjectStacking: true
+}),
       f = fabric.Image.filters;
 
 		   canvas.enableGLFiltering = false;
-var rect = new fabric.Rect({left:100, top: 150, fill: 'red', width:200, height:200});
+var rect = new fabric.Rect({left:100, top: 150, fill: 'LightGray', width:200, height:200});
 	
 document.getElementById('file').addEventListener("change", function (e) {
   var file = e.target.files[0];
@@ -463,6 +465,10 @@ function Copy() {
 }
 
 
+function Crop(){
+	canvas.add(rect);
+	canvas.bringToFront(rect);
+}
 
 
 function Paste() {
